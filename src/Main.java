@@ -20,24 +20,44 @@ public class Main {
 
         Epic epic1 = new Epic("Разработать канбан", "Написать приложения");
         Epic epic2 = new Epic("Разработать калькулятор", "Декомпозировать задачи");
+        Epic epic3 = new Epic("Тест доработок", "Протестировать доработки");
+        Epic epic4 = new Epic("Пустой эпик", "Без сабтасок");
 
         taskManager.addEpic(epic1);
         taskManager.addEpic(epic2);
+        taskManager.addEpic(epic3);
+        taskManager.addEpic(epic4);
 
         Subtask subtask1 = new Subtask("Продумать логику", "Логика", Status.NEW, epic1.getId());
         Subtask subtask2 = new Subtask("Придумать стиль", "Стиль", Status.NEW, epic1.getId());
+
         Subtask subtask3 = new Subtask("Придумать название", "Имя", Status.DONE, epic2.getId());
         Subtask subtask4 = new Subtask("Увеличить бюджет", "Бюджет", Status.DONE, epic2.getId());
+
+        Subtask subtask5 = new Subtask("Доработать метод", "Метод изменения епиков", Status.NEW, epic3.getId());
+        Subtask subtask6 = new Subtask("Изменить приватность", "Модификаторы", Status.DONE, epic3.getId());
 
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         taskManager.addSubtask(subtask3);
         taskManager.addSubtask(subtask4);
+        taskManager.addSubtask(subtask5);
+        taskManager.addSubtask(subtask6);
         printAllTasks(taskManager);
 
         final Task task = taskManager.getTaskById(task1.getId());
         task.setStatus(Status.DONE);
-        taskManager.updateTask(task1.getId(), task1);
+        taskManager.updateTask(task1);
+        printAllTasks(taskManager);
+
+        System.out.println("CHANGE SUBTASK STATUS");
+        subtask1.setStatus(Status.DONE);
+        taskManager.updateSubtask(subtask1);
+        printAllTasks(taskManager);
+
+        System.out.println("DELETE SUBTASK");
+        taskManager.deleteSubtaskById(subtask1.getId());
+        taskManager.updateEpic(epic1);
         printAllTasks(taskManager);
 
         System.out.println("DELETE: " + task1.getName());
@@ -49,7 +69,6 @@ public class Main {
         System.out.println("Delete all tasks:");
         taskManager.deleteAllTasks();
         printAllTasks(taskManager);
-
     }
 
     public static void printAllTasks(TaskManager taskManager) {
