@@ -1,3 +1,5 @@
+import manager.InMemoryTaskManager;
+import manager.Managers;
 import manager.TaskManager;
 import status.Status;
 import tasks.Epic;
@@ -8,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
 
         Task task1 = new Task("Архитектура", "Архитектура приложения", Status.NEW);
         Task task2 = new Task("Метод получения", "Получение задачи ", Status.IN_PROGRESS);
@@ -17,6 +19,11 @@ public class Main {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.getTaskById(task3.getId());
 
         Epic epic1 = new Epic("Разработать канбан", "Написать приложения");
         Epic epic2 = new Epic("Разработать калькулятор", "Декомпозировать задачи");
@@ -27,6 +34,7 @@ public class Main {
         taskManager.addEpic(epic2);
         taskManager.addEpic(epic3);
         taskManager.addEpic(epic4);
+        taskManager.getEpicById(epic1.getId());
 
         Subtask subtask1 = new Subtask("Продумать логику", "Логика", Status.NEW, epic1.getId());
         Subtask subtask2 = new Subtask("Придумать стиль", "Стиль", Status.NEW, epic1.getId());
@@ -43,6 +51,16 @@ public class Main {
         taskManager.addSubtask(subtask4);
         taskManager.addSubtask(subtask5);
         taskManager.addSubtask(subtask6);
+        taskManager.getSubtaskById(subtask1.getId());
+        taskManager.getSubtaskById(subtask2.getId());
+        taskManager.getSubtaskById(subtask3.getId());
+        taskManager.getSubtaskById(subtask4.getId());
+        taskManager.getSubtaskById(subtask5.getId());
+        taskManager.getSubtaskById(subtask6.getId());
+        taskManager.getSubtaskById(subtask1.getId());
+        taskManager.getSubtaskById(subtask2.getId());
+        taskManager.getTaskById(task1.getId());
+
         printAllTasks(taskManager);
 
         final Task task = taskManager.getTaskById(task1.getId());
@@ -69,6 +87,15 @@ public class Main {
         System.out.println("Delete all tasks:");
         taskManager.deleteAllTasks();
         printAllTasks(taskManager);
+        printHistory(taskManager);
+    }
+
+    public static void printHistory(TaskManager taskManager) {
+
+        System.out.println("История просмотров задач:");
+        for (Task t : taskManager.getHistory()) {
+            System.out.println(t);
+        }
     }
 
     public static void printAllTasks(TaskManager taskManager) {
