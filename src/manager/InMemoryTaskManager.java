@@ -16,7 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epics;
     private final HashMap<Integer, Subtask> subtasks;
     private int nextId;
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     public InMemoryTaskManager() {
@@ -173,7 +173,6 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasksList;
     }
 
-    @Override
     public void updateStatus(int epicId) {
         List<Subtask> subtasks = getSubtasksByEpicId(epicId);
         if (subtasks.isEmpty()) {

@@ -1,6 +1,5 @@
-import manager.HistoryManager;
-import manager.Managers;
-import manager.TaskManager;
+package manager;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import status.Status;
