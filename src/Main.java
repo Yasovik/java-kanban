@@ -19,11 +19,7 @@ public class Main {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
-        taskManager.getTaskById(task1.getId());
-        taskManager.getTaskById(task2.getId());
-        taskManager.getTaskById(task3.getId());
-        taskManager.getTaskById(task3.getId());
-        taskManager.getTaskById(task3.getId());
+
 
         Epic epic1 = new Epic("Разработать канбан", "Написать приложения");
         Epic epic2 = new Epic("Разработать калькулятор", "Декомпозировать задачи");
@@ -34,7 +30,6 @@ public class Main {
         taskManager.addEpic(epic2);
         taskManager.addEpic(epic3);
         taskManager.addEpic(epic4);
-        taskManager.getEpicById(epic1.getId());
 
         Subtask subtask1 = new Subtask("Продумать логику", "Логика", Status.NEW, epic1.getId());
         Subtask subtask2 = new Subtask("Придумать стиль", "Стиль", Status.NEW, epic1.getId());
@@ -51,15 +46,21 @@ public class Main {
         taskManager.addSubtask(subtask4);
         taskManager.addSubtask(subtask5);
         taskManager.addSubtask(subtask6);
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.getTaskById(task3.getId());
+        taskManager.getTaskById(task3.getId());
         taskManager.getSubtaskById(subtask1.getId());
-        taskManager.getSubtaskById(subtask2.getId());
         taskManager.getSubtaskById(subtask3.getId());
         taskManager.getSubtaskById(subtask4.getId());
         taskManager.getSubtaskById(subtask5.getId());
         taskManager.getSubtaskById(subtask6.getId());
         taskManager.getSubtaskById(subtask1.getId());
-        taskManager.getSubtaskById(subtask2.getId());
         taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task1.getId());
+        taskManager.getEpicById(epic1.getId());
+        printHistory(taskManager);
 
         printAllTasks(taskManager);
 
@@ -85,7 +86,9 @@ public class Main {
         printAllTasks(taskManager);
 
         System.out.println("Delete all tasks:");
+        taskManager.deleteAllSubtasks();
         taskManager.deleteAllTasks();
+        taskManager.deleteAllEpics();
         printAllTasks(taskManager);
         printHistory(taskManager);
     }

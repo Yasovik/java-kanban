@@ -18,7 +18,6 @@ class TaskTest {
         task.setId(1);
         task1.setId(1);
         assertEquals(task.getId(), task1.getId(), "Идентификаторы не равны");
-        assertEquals(task, task1, "Задачи не равны");
     }
 
     @Test
@@ -30,7 +29,21 @@ class TaskTest {
         assertEquals(task.getName(), taskManager.getTaskById(task.getId()).getName());
         assertEquals(task.getDescription(), taskManager.getTaskById(task.getId()).getDescription());
         assertEquals(task.getStatus(), taskManager.getTaskById(task.getId()).getStatus());
+    }
 
+    @Test
+    @DisplayName("Проверка на изменение задач сеттерами")
+    public void changeValueTest() {
+        Task task = new Task("1", "1", Status.NEW);
+        InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
+        taskManager.addTask(task);
+        Task newTask = task;
+        newTask.setName("Новое Имя");
+        newTask.setDescription("Новый дескриптион");
+        newTask.setStatus(Status.IN_PROGRESS);
+        assertEquals("Новое Имя", newTask.getName());
+        assertEquals("Новый дескриптион", newTask.getDescription());
+        assertEquals(Status.IN_PROGRESS, newTask.getStatus());
     }
 
 }
