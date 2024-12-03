@@ -54,10 +54,7 @@ public class Task {
         if (obj == null) return false;
         if (this.getClass() != obj.getClass()) return false;
         Task task = (Task) obj;
-        return Objects.equals(name, task.name) &&
-                Objects.equals(description, task.description) &&
-                Objects.equals(id, task.id) &&
-                Objects.equals(status, task.status);
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(id, task.id) && Objects.equals(status, task.status);
     }
 
     @Override
@@ -67,11 +64,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return getClass() + "{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
+        return getClass() + "{" + "name='" + name + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + '}';
     }
 }

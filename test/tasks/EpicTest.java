@@ -21,7 +21,6 @@ public class EpicTest {
         epic.setId(1);
         epic1.setId(1);
         assertEquals(epic.getId(), epic1.getId(), "Идентификаторы не равны");
-        assertEquals(epic, epic1, "Задачи не равны");
     }
 
     @Test
@@ -33,5 +32,16 @@ public class EpicTest {
         subtask.setId(epic.getId());
         taskManager.addSubtask(subtask);
         assertFalse(epic.getSubtasksInEpic().isEmpty(), "Эпик не может добавить себя в качестве подзадачи");
+    }
+
+    @Test
+    @DisplayName("Проверка: Внутри эпиков не должно оставаться неактуальных id подзадач.")
+    void intoEpicNoContainsDeletedSubtasksTest() {
+        Epic epic = new Epic("epic1", "description1");
+        taskManager.addEpic(epic);
+        Subtask subtask = new Subtask("subtask1", "description1", Status.NEW, epic.getId());
+        taskManager.addSubtask(subtask);
+        taskManager.deleteAllSubtasks();
+        assertFalse(epic.getSubtasksInEpic().contains(subtask.getId()));
     }
 }

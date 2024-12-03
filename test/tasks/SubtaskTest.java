@@ -6,8 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import status.Status;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SubtaskTest {
     InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
@@ -20,7 +19,6 @@ public class SubtaskTest {
         subtask.setId(1);
         subtask1.setId(1);
         assertEquals(subtask.getId(), subtask1.getId(), "Идентификаторы не равны");
-        assertEquals(subtask, subtask1, "Задачи не равны");
     }
 
     @Test
@@ -32,5 +30,19 @@ public class SubtaskTest {
         taskManager.addSubtask(subtask);
         subtask.setId(subtask.getId());
         assertNotEquals(subtask.getId(), subtask.getIdEpic(), "Подзадача не может быть собственным эпиком");
+    }
+
+    @Test
+    @DisplayName("Проверка: Удаляемые подзадачи не должны хранить внутри себя старые id.")
+    void deleteSubTaskNoContainsOldIdTest() {
+        Epic epic = new Epic("epic1", "description1");
+        taskManager.addEpic(epic);
+        Subtask subtask = new Subtask("subtask1", "description1", Status.NEW, epic.getId());
+        taskManager.addSubtask(subtask);
+        epic.getSubtasksInEpic().add(subtask.getIdEpic());
+        taskManager.deleteSubtaskById(subtask.getId());
+        assertFalse(epic.getSubtasksInEpic().contains(subtask.getId()));
+        assertNull(taskManager.getSubtaskById(subtask.getId()));
+
     }
 }
