@@ -86,9 +86,7 @@ public class Main {
         printAllTasks(taskManager);
 
         System.out.println("Delete all tasks:");
-        taskManager.deleteAllSubtasks();
-        taskManager.deleteAllTasks();
-        taskManager.deleteAllEpics();
+        taskManager.deleteAll();
         printAllTasks(taskManager);
         printHistory(taskManager);
     }
