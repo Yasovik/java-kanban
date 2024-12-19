@@ -42,6 +42,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public void deleteAll() {
+        deleteAllTasks();
+        deleteAllEpics();
+        deleteAllSubtasks();
+    }
+
+    @Override
     public void deleteAllTasks() {
         for (Task task : tasks.values()) {
             historyManager.remove(task.getId());

@@ -48,7 +48,6 @@ public class FileBackedTaskManagerTest {
     public void saveTaskTest() {
         Task task = new Task("Task", "TaskTest", Status.NEW);
         fileBackedTaskManager.addTask(task);
-        fileBackedTaskManager.save();
         List<Task> taskList = FileBackedTaskManager.loadFromFile(file).getTasks();
         assertEquals(task, taskList.get(0));
     }
@@ -58,7 +57,6 @@ public class FileBackedTaskManagerTest {
     public void saveEpicTest() {
         Epic epic = new Epic("Epic", "EpicTest");
         fileBackedTaskManager.addEpic(epic);
-        fileBackedTaskManager.save();
         List<Epic> taskList = FileBackedTaskManager.loadFromFile(file).getEpics();
         assertEquals(epic, taskList.get(0));
     }
@@ -70,7 +68,6 @@ public class FileBackedTaskManagerTest {
         fileBackedTaskManager.addEpic(epic);
         Subtask subtask = new Subtask("Subtask", "SubtaskTest", Status.NEW, epic.getId());
         fileBackedTaskManager.addSubtask(subtask);
-        fileBackedTaskManager.save();
         List<Subtask> taskList = FileBackedTaskManager.loadFromFile(file).getSubtasks();
         assertEquals(subtask, taskList.get(0));
     }
