@@ -5,9 +5,10 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static status.Status.NEW;
 
@@ -15,15 +16,20 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, Epic> epics;
     private final HashMap<Integer, Subtask> subtasks;
+    private final TreeSet<Task> tasksStartTime;
     private int nextId;
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         epics = new HashMap<>();
         subtasks = new HashMap<>();
         nextId = 1;
+        tasksStartTime = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    }
+
+    public List<Task> getPrioritizedTasks() {
+        return tasksStartTime.stream().filter(this::notIntersectCheck).toList();
     }
 
     @Override
@@ -102,6 +108,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void addTask(Task task) {
         task.setId(nextId++);
         tasks.put(task.getId(), task);
+        if (task.getStartTime() != null) {
+            if (notIntersectCheck(task)) {
+                tasksStartTime.add(task);
+            }
+        }
     }
 
     @Override
@@ -121,6 +132,12 @@ public class InMemoryTaskManager implements TaskManager {
         subtask.setId(nextId++);
         subtasks.put(subtask.getId(), subtask);
         epic.getSubtasksInEpic().add(subtask.getId());
+        updateDurationAndStartTimeOfEpic(epics.get(subtask.getIdEpic()));
+        if (subtask.getStartTime() != null) {
+            if (notIntersectCheck(subtask)) {
+                tasksStartTime.add(subtask);
+            }
+        }
         updateStatus(epic.getId());
     }
 
@@ -135,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
+            updateDurationAndStartTimeOfEpic(epic);
         }
     }
 
@@ -146,11 +164,15 @@ public class InMemoryTaskManager implements TaskManager {
             if (epic != null) {
                 updateStatus(epic.getId());
             }
+            if (!notIntersectCheck(subtask)) {
+                deleteSubtaskById(subtask.getId());
+            }
         }
     }
 
     @Override
     public void deleteTask(int id) {
+        tasksStartTime.remove(tasks.get(id));
         historyManager.remove(id);
         tasks.remove(id);
     }
@@ -161,14 +183,18 @@ public class InMemoryTaskManager implements TaskManager {
         if (removedEpic != null) {
             for (Integer subtaskId : removedEpic.getSubtasksInEpic()) {
                 subtasks.remove(subtaskId);
+                //tasksStartTime.remove(subtasks.get(subtaskId));
             }
         }
     }
 
     @Override
     public void deleteSubtaskById(int id) {
+        int epicId = subtasks.get(id).getIdEpic();
+        tasksStartTime.remove(subtasks.get(id));
         historyManager.remove(id);
         Subtask removedSubtask = subtasks.remove(id);
+        updateDurationAndStartTimeOfEpic(epics.get(epicId));
         if (removedSubtask != null) {
             Epic epic = epics.get(removedSubtask.getIdEpic());
             if (epic != null) {
@@ -184,14 +210,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic == null) {
             return new ArrayList<>();
         }
-
-        List<Subtask> subtasksList = new ArrayList<>();
-        for (Integer subtaskId : epic.getSubtasksInEpic()) {
-            Subtask subtask = subtasks.get(subtaskId);
-            if (subtask != null) {
-                subtasksList.add(subtask);
-            }
-        }
+        List<Subtask> subtasksList = epic.getSubtasksInEpic().stream()
+                .map(subtasks::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         return subtasksList;
     }
 
@@ -227,6 +249,47 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    private boolean notIntersectCheck(Task task) {
+        boolean isNotIntersection = true;
+        if (tasksStartTime.isEmpty()) {
+            return true;
+        }
+        for (Task treeTask : tasksStartTime) {
+            if (treeTask.getStartTime().isBefore(task.getStartTime()) && treeTask.getEndTime().isAfter(task.getStartTime())
+                    || treeTask.getStartTime().isAfter(task.getStartTime()) && treeTask.getEndTime().isBefore(task.getStartTime())) {
+                isNotIntersection = false;
+                break;
+            }
+        }
+        return isNotIntersection;
+    }
+
+    private void updateDurationAndStartTimeOfEpic(Epic epic) {
+        if (getSubtasksByEpicId(epic.getId()).isEmpty()) {
+            epic.setEndTime(null);
+            epic.setStartTime(null);
+            epic.setDuration(null);
+            return;
+        }
+        LocalDateTime startTime = getSubtasksByEpicId(epic.getId()).stream().findFirst().orElseThrow().getStartTime();
+        LocalDateTime endTime = getSubtasksByEpicId(epic.getId()).stream().findFirst().get().getEndTime();
+        Duration duration = getSubtasksByEpicId(epic.getId()).stream().findFirst().get().getDuration();
+        int per = 0;
+        for (Subtask subtask : getSubtasksByEpicId(epic.getId())) {
+            if (startTime.isAfter(subtask.getStartTime())) {
+                startTime = subtask.getStartTime();
+            }
+            if (endTime.isBefore(subtask.getEndTime())) {
+                endTime = subtask.getEndTime();
+            }
+            if (per != 0) duration = duration.plus(subtask.getDuration());
+            per++;
+        }
+        epic.setEndTime(endTime);
+        epic.setStartTime(startTime);
+        epic.setDuration(duration);
     }
 
 }

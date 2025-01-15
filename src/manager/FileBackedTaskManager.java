@@ -11,7 +11,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+
+import static utils.Utils.formatter;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -22,7 +27,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (Writer fileWriter = new FileWriter(file)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,startTime,duration,endTime,epic\n");
             for (Task task : getTasks()) {
                 fileWriter.write(toString(task) + "\n");
             }
@@ -137,6 +142,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         sb.append(task.getName()).append(",");
         sb.append(task.getStatus()).append(",");
         sb.append(task.getDescription()).append(",");
+        sb.append(task.getStartTime()).append(",");
+        sb.append(task.getDuration()).append(",");
+        sb.append(task.getEndTime()).append(",");
         if (task instanceof Subtask) {
             sb.append(((Subtask) task).getIdEpic());
         } else {
@@ -151,15 +159,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = parts[2];
         String status = parts[3];
         String desc = parts[4];
+        String startTime = parts[5];
+        Duration duration = Duration.parse(parts[6]);
+        String endTime = parts[7];
         TypeTask typeTask = TypeTask.valueOf(type);
         Task task = null;
         if (typeTask == TypeTask.TASK) {
             task = new Task(name, desc, Status.valueOf(status));
-        } else if (typeTask == TypeTask.EPIC) {
+            task.setStartTime(LocalDateTime.parse(startTime.formatted(formatter)));
+            task.setDuration(Duration.ofMinutes(duration.toMinutes()));
+        }
+        if (typeTask == TypeTask.EPIC) {
             task = new Epic(name, desc);
-        } else if (typeTask == TypeTask.SUB_TASK) {
-            String epicId = parts[5];
+            if (!Objects.equals(startTime, "Время начала не определено")) {
+                task.setStartTime(LocalDateTime.parse(startTime.formatted(formatter)));
+            }
+            if (!Objects.equals(duration, "Продолжительность не определена")) {
+                task.setDuration(Duration.ofMinutes(duration.toMinutes()));
+            }
+            if (!Objects.equals(endTime, "Время окончания не определено")) {
+                task.setEndTime(LocalDateTime.parse(startTime.formatted(formatter)));
+            }
+        }
+        if (typeTask == TypeTask.SUB_TASK) {
+            String epicId = parts[8];
             task = new Subtask(name, desc, Status.valueOf(status), Integer.parseInt(epicId));
+            task.setStartTime(LocalDateTime.parse(startTime.formatted(formatter)));
+            task.setDuration(Duration.ofMinutes(duration.toMinutes()));
         }
         return task;
     }
@@ -167,7 +193,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private void read() throws ManagerSaveException {
         try {
             List<String> lines = Files.readAllLines(file.toPath());
-
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i);
 

@@ -6,6 +6,9 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -15,6 +18,12 @@ public class Main {
         Task task1 = new Task("Архитектура", "Архитектура приложения", Status.NEW);
         Task task2 = new Task("Метод получения", "Получение задачи ", Status.IN_PROGRESS);
         Task task3 = new Task("Метод удаления", "Удалить все задачи", Status.DONE);
+        task1.setStartTime(LocalDateTime.of(2024, 10, 10, 10, 10));
+        task1.setDuration(Duration.ofHours(10));
+        task2.setStartTime(LocalDateTime.of(2024, 10, 10, 10, 10));
+        task2.setDuration(Duration.ofHours(10));
+        task3.setStartTime(LocalDateTime.of(2024, 10, 10, 10, 10));
+        task3.setDuration(Duration.ofHours(10));
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
@@ -39,6 +48,19 @@ public class Main {
 
         Subtask subtask5 = new Subtask("Доработать метод", "Метод изменения епиков", Status.NEW, epic3.getId());
         Subtask subtask6 = new Subtask("Изменить приватность", "Модификаторы", Status.DONE, epic3.getId());
+
+        subtask1.setStartTime(LocalDateTime.of(2024, 7, 24, 0, 0));
+        subtask1.setDuration(Duration.ofHours(6));
+        subtask2.setStartTime(LocalDateTime.of(2024, 8, 24, 0, 0));
+        subtask2.setDuration(Duration.ofHours(7));
+        subtask3.setStartTime(LocalDateTime.of(2024, 9, 24, 0, 0));
+        subtask3.setDuration(Duration.ofHours(8));
+        subtask4.setStartTime(LocalDateTime.of(2024, 10, 24, 0, 0));
+        subtask4.setDuration(Duration.ofHours(9));
+        subtask5.setStartTime(LocalDateTime.of(2024, 11, 24, 0, 0));
+        subtask5.setDuration(Duration.ofHours(10));
+        subtask6.setStartTime(LocalDateTime.of(2024, 12, 24, 0, 0));
+        subtask6.setDuration(Duration.ofHours(11));
 
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
