@@ -166,7 +166,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         Task task = null;
         if (typeTask == TypeTask.TASK) {
             task = new Task(name, desc, Status.valueOf(status));
-            task.setStartTime(LocalDateTime.parse(startTime.formatted(formatter)));
+            LocalDateTime start = LocalDateTime.parse(startTime.formatted(formatter));
+            task.setStartTime(start);
             task.setDuration(Duration.ofMinutes(duration.toMinutes()));
         }
         if (typeTask == TypeTask.EPIC) {

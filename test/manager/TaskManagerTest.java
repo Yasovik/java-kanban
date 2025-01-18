@@ -113,18 +113,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    @DisplayName("Проверка на получение subTask по ид")
-    public void getSubTaskByIdTest() {
-        List<Task> taskList = new ArrayList<>();
-        T taskManager = getTaskManager();
-        taskList.add(subtask);
-        taskManager.addEpic(epic);
-        taskManager.addSubtask(subtask);
-        Assertions.assertEquals(taskList.get(0), taskManager.getSubtaskById(subtask.getId()));
-    }
-
-    @Test
-    @DisplayName("Проверка на получение subTask по ид")
+    @DisplayName("Проверка на удаление всех тасок")
     public void deleteAllTest() {
         T taskManager = getTaskManager();
         taskManager.addEpic(epic);

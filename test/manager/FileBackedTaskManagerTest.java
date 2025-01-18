@@ -20,21 +20,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+    @Override
+    public FileBackedTaskManager getTaskManager() {
+        return new FileBackedTaskManager(file);
+    }
+
     public File file;
-    public FileBackedTaskManager fileBackedTaskManager;
-    InMemoryTaskManager inMemoryTaskManager;
-    InMemoryHistoryManager inMemoryHistoryManager;
-    HistoryManager historyManager;
+    protected FileBackedTaskManager fileBackedTaskManager;
+    protected InMemoryTaskManager inMemoryTaskManager;
+    protected InMemoryHistoryManager inMemoryHistoryManager;
+    protected HistoryManager historyManager;
 
     @BeforeEach
     public void setUp() throws IOException {
         file = File.createTempFile("kanban", "csv");
-        //file = new File("c.csv");
         fileBackedTaskManager = new FileBackedTaskManager(file);
         inMemoryTaskManager = new InMemoryTaskManager();
         inMemoryHistoryManager = new InMemoryHistoryManager();
         historyManager = Managers.getDefaultHistory();
+
     }
 
     @Test
@@ -92,6 +97,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Проверка на exception")
     public void exceptionTest() {
         File emptyFile = new File("");
         Exception exception = assertThrows(ManagerSaveException.class, () -> {

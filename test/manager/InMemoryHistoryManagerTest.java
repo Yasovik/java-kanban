@@ -35,12 +35,14 @@ public class InMemoryHistoryManagerTest {
         task2.setDuration(Duration.ofHours(14));
         task3.setStartTime(LocalDateTime.of(2024, 9, 16, 0, 0));
         task3.setDuration(Duration.ofHours(14));
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.addTask(task3);
     }
 
     @Test
     @DisplayName("задачи, добавляемые в HistoryManager, сохраняют предыдущую версию задачи и её данных")
     void shouldKeepPreviousVersionTaskInHistory() {
-        taskManager.addTask(task1);
         historyManager.add(task1);
         taskManager.updateTask(updatedTask);
         historyManager.add(updatedTask);
@@ -52,36 +54,29 @@ public class InMemoryHistoryManagerTest {
     @Test
     @DisplayName("Проверка, что встроенный связный список версий, добавляет корректно")
     void addInHistoryTest() {
-        taskManager.addTask(task1);
         taskManager.getTaskById(task1.getId());
         int result = taskManager.getHistory().size();
         assertEquals(1, result);
-
     }
 
     @Test
     @DisplayName("Проверка, что встроенный связный список версий, удаляет корректно")
     void deleteInHistoryTest() {
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
         taskManager.deleteTask(task1.getId());
         int result = taskManager.getHistory().size();
         assertEquals(1, result);
-
     }
 
     @Test
     @DisplayName("Проверка, что встроенный связный список версий, хранит только уникальные записи}")
     void distinctValueInHistoryTest() {
-        taskManager.addTask(task1);
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task1.getId());
         int result = taskManager.getHistory().size();
         assertEquals(1, result);
-
     }
 
     @Test
@@ -94,18 +89,14 @@ public class InMemoryHistoryManagerTest {
         historyManager.add(task1);
         historyManager.add(task1);
         Assertions.assertEquals(historyTask, historyManager.getHistory());
-
     }
 
     @Test
     @DisplayName("Проверка на удаления из начала")
-    public void removeFromStartTestTest() {
+    public void removeFromStartTest() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task2);
         historyTask.add(task3);
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
-        taskManager.addTask(task3);
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
         taskManager.getTaskById(task3.getId());
@@ -115,13 +106,10 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     @DisplayName("Проверка на удаление из середины")
-    public void removeFromMidTestTest() {
+    public void removeFromMidTest() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task1);
         historyTask.add(task3);
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
-        taskManager.addTask(task3);
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
         taskManager.getTaskById(task3.getId());
@@ -131,13 +119,10 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     @DisplayName("Проверка на удаление с конца")
-    public void removeFromEndTestTest() {
+    public void removeFromEndTest() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task1);
         historyTask.add(task2);
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
-        taskManager.addTask(task3);
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
         taskManager.getTaskById(task3.getId());
