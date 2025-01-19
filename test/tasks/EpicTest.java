@@ -6,6 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import status.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -29,6 +32,8 @@ public class EpicTest {
         Epic epic = new Epic("epic", "desc");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("Name", "desc", Status.NEW, epic.getId());
+        subtask.setStartTime(LocalDateTime.of(2024, 6, 23, 0, 0));
+        subtask.setDuration(Duration.ofHours(4));
         subtask.setId(epic.getId());
         taskManager.addSubtask(subtask);
         assertFalse(epic.getSubtasksInEpic().isEmpty(), "Эпик не может добавить себя в качестве подзадачи");
@@ -40,6 +45,8 @@ public class EpicTest {
         Epic epic = new Epic("epic1", "description1");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("subtask1", "description1", Status.NEW, epic.getId());
+        subtask.setStartTime(LocalDateTime.of(2024, 6, 23, 0, 0));
+        subtask.setDuration(Duration.ofHours(4));
         taskManager.addSubtask(subtask);
         taskManager.deleteAllSubtasks();
         assertFalse(epic.getSubtasksInEpic().contains(subtask.getId()));

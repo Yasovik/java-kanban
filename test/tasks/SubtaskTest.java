@@ -6,6 +6,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import status.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SubtaskTest {
@@ -27,6 +30,8 @@ public class SubtaskTest {
         Epic epic = new Epic("1", "2");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("1", "2", Status.NEW, epic.getId());
+        subtask.setStartTime(LocalDateTime.of(2024, 7, 18, 0, 0));
+        subtask.setDuration(Duration.ofHours(4));
         taskManager.addSubtask(subtask);
         subtask.setId(subtask.getId());
         assertNotEquals(subtask.getId(), subtask.getIdEpic(), "Подзадача не может быть собственным эпиком");
@@ -38,11 +43,12 @@ public class SubtaskTest {
         Epic epic = new Epic("epic1", "description1");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("subtask1", "description1", Status.NEW, epic.getId());
+        subtask.setStartTime(LocalDateTime.of(2024, 7, 24, 0, 0));
+        subtask.setDuration(Duration.ofHours(6));
         taskManager.addSubtask(subtask);
         epic.getSubtasksInEpic().add(subtask.getIdEpic());
         taskManager.deleteSubtaskById(subtask.getId());
         assertFalse(epic.getSubtasksInEpic().contains(subtask.getId()));
         assertNull(taskManager.getSubtaskById(subtask.getId()));
-
     }
 }
