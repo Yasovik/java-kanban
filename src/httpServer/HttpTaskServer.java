@@ -3,8 +3,6 @@ package httpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
-import httpServer.adapter.DurationAdapter;
-import httpServer.adapter.LocalDateTimeAdapter;
 import httpServer.handler.*;
 import manager.Managers;
 import manager.TaskManager;
