@@ -1,9 +1,9 @@
-package httpServer;
+package http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
-import httpServer.handler.*;
+import http.handler.*;
 import manager.Managers;
 import manager.TaskManager;
 import status.Status;

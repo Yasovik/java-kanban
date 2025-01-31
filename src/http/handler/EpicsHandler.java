@@ -1,8 +1,8 @@
-package httpServer.handler;
+package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import httpServer.HttpTaskServer;
+import http.HttpTaskServer;
 import tasks.Epic;
 import tasks.Subtask;
 

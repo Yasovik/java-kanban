@@ -1,9 +1,8 @@
-package httpServer.handler;
+package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import httpServer.HttpTaskServer;
-import tasks.Subtask;
+import http.HttpTaskServer;
 import tasks.Task;
 
 import java.io.IOException;
@@ -12,32 +11,32 @@ import java.util.List;
 
 import static java.net.HttpURLConnection.*;
 
-public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
+public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         switch (exchange.getRequestMethod()) {
             case "GET":
-                handleGetSubTasks(exchange);
+                handleGetTasks(exchange);
                 break;
             case "POST":
-                handleCreateSubTask(exchange);
+                handleCreateTask(exchange);
                 break;
             case "DELETE":
-                handleDeleteSubTask(exchange);
+                handleDeleteTask(exchange);
                 break;
             default:
                 sendText(exchange, "Method Not Allowed", HTTP_NOT_FOUND);
         }
     }
 
-    private void handleGetSubTasks(HttpExchange exchange) throws IOException {
+    private void handleGetTasks(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
-        List<Subtask> tasks = HttpTaskServer.taskManager.getSubtasks();
+        List<Task> tasks = HttpTaskServer.taskManager.getTasks();
         if (query != null && query.startsWith("id=")) {
             int id = Integer.parseInt(query.split("=")[1]);
-            Task tasksA = HttpTaskServer.taskManager.getSubtaskById(id);
-            if (tasksA != null && tasks.size() >= id - 1) {
-                String jsonResponse = HttpTaskServer.gson.toJson(tasksA);
+            Task task = HttpTaskServer.taskManager.getTaskById(id);
+            if (task != null && tasks.size() >= id) {
+                String jsonResponse = HttpTaskServer.gson.toJson(task);
                 sendText(exchange, jsonResponse, HTTP_OK);
             } else sendNotFound(exchange);
 
@@ -50,30 +49,30 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
 
     }
 
-    private void handleCreateSubTask(HttpExchange exchange) throws IOException {
+    private void handleCreateTask(HttpExchange exchange) throws IOException {
         try {
-            Subtask task = HttpTaskServer.gson.fromJson(new InputStreamReader(exchange.getRequestBody()), Subtask.class);
+            Task task = HttpTaskServer.gson.fromJson(new InputStreamReader(exchange.getRequestBody()), Task.class);
             if (task.getId() == 0) {
                 if (!HttpTaskServer.taskManager.notIntersectTimeCheck(task)) {
-                    sendText(exchange, "{\"message\":\"Сабтаски пересекаются по времени\"}", HTTP_NOT_ACCEPTABLE);
+                    sendText(exchange, "{\"message\":\"Таски пересекаются по времени\"}", HTTP_NOT_ACCEPTABLE);
                     return;
                 }
-                HttpTaskServer.taskManager.addSubtask(task);
-                sendText(exchange, "{\"message\":\"Сабтаск успешно создан\"}", HTTP_CREATED);
+                HttpTaskServer.taskManager.addTask(task);
+                sendText(exchange, "{\"message\":\"Таска успешно создана\"}", HTTP_CREATED);
             }
-            HttpTaskServer.taskManager.updateSubtask(task);
-            sendText(exchange, "{\"message\":\"Сабтаск успешно обновлен\"}", HTTP_CREATED);
+            HttpTaskServer.taskManager.updateTask(task);
+            sendText(exchange, "{\"message\":\"Таска успешно обновлена\"}", HTTP_CREATED);
         } catch (Exception e) {
             sendInternalServerError(exchange, e.getMessage());
         }
     }
 
-    private void handleDeleteSubTask(HttpExchange exchange) throws IOException {
+    private void handleDeleteTask(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
         if (query != null && query.startsWith("id=")) {
             int id = Integer.parseInt(query.split("=")[1]);
-            HttpTaskServer.taskManager.deleteSubtaskById(id);
-            sendText(exchange, "{\"message\":\"Сабтаск удален\"}", HTTP_OK);
+            HttpTaskServer.taskManager.deleteTask(id);
+            sendText(exchange, "{\"message\":\"Tаска удалена\"}", HTTP_OK);
         } else {
             sendNotFound(exchange);
         }
