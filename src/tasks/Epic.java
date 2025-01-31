@@ -10,7 +10,6 @@ import static utils.Utils.formatter;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subTaskId;
-    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description, NEW);

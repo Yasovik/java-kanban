@@ -28,6 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasksStartTime = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return tasksStartTime.stream().filter(this::notIntersectTimeCheck).toList();
     }
@@ -249,7 +250,8 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-    private boolean notIntersectTimeCheck(Task task) {
+    @Override
+    public boolean notIntersectTimeCheck(Task task) {
         boolean isNotIntersection = true;
         if (tasksStartTime.isEmpty()) {
             return true;
