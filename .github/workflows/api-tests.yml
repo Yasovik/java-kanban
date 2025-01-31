@@ -22,7 +22,7 @@ jobs:
       - name: Checkout tests
         uses: actions/checkout@v3
         with:
-          repository: 'yandex-praktikum/java-kanban'
+          repository: 'java-kanban'
           ref: ci
           path: tests
 
@@ -35,24 +35,6 @@ jobs:
               java -jar ./tests/lib/checkstyle-10.13.0-all.jar -c ./tests/checkstyle.xml $FILE
             fi
           done < sources.txt
-          
-          
 
-      - name: Build application
-        run: |
-          find ./src -type f -name "*.java" > sources.txt
-          javac -d out -cp ./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/gson-2.10.1.jar:./src @sources.txt
-          javac -d out -cp ./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/rest-assured-5.2.0.jar:./src @sources.txt
-        
-
-      - name: Build tests
-        run: |
-          find ./test -type f -name "*.java" > tests.txt
-          javac -d out -cp ./out:./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/gson-2.10.1.jar:./test @tests.txt
-          javac -d out -cp ./out:./tests/lib/junit-platform-console-standalone-1.9.3.jar:./tests/lib/rest-assured-5.2.0.jar:./test @tests.txt
-
-      - name: Run tests
-        run: |
-          java -jar ./tests/lib/junit-platform-console-standalone-1.9.3.jar --class-path ./tests/lib/gson-2.10.1.jar:./out --scan-class-path
-          java -jar ./tests/lib/junit-platform-console-standalone-1.9.3.jar --class-path ./tests/lib/rest-assured-5.2.0.jar:./out --scan-class-path
-          
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots verify
