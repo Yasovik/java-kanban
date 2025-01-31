@@ -9,9 +9,5 @@
         <module name="java-kanban" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="kanban" target="20" />
-      <module name="may" target="20" />
-    </bytecodeTargetLevel>
   </component>
 </project>
