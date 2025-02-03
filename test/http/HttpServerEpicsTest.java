@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 
 public class HttpServerEpicsTest {
@@ -94,5 +94,13 @@ public class HttpServerEpicsTest {
         Response response1 = given().when().pathParam("tail", "1/subtasks").get(urlEpics + "{tail}");
         response1.then().statusCode(SC_OK);
         response1.then().body("name[0]", equalTo("1"));
+    }
+
+    @Test
+    @DisplayName("Создание и епика 500")
+    public void createEpic500Test() {
+        String body = gson.toJson(epic);
+        Response response = given().when().body(body + ",").post(urlEpics);
+        response.then().statusCode(SC_INTERNAL_SERVER_ERROR);
     }
 }

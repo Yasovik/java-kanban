@@ -119,4 +119,13 @@ public class HttpServerSubTasksTest {
         response.then().statusCode(SC_OK);
         given().when().delete(urlSubtasks).then().statusCode(SC_NOT_FOUND);
     }
+
+    @Test
+    @DisplayName("Создание сабтаски 500")
+    public void createSubtask500Test() {
+        Subtask subtask = new Subtask("1", "1", Status.NEW, 1);
+        String body = gson.toJson(subtask);
+        Response response = given().when().body(body).post(urlSubtasks);
+        response.then().statusCode(SC_INTERNAL_SERVER_ERROR);
+    }
 }

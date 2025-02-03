@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 
 public class HttpServerTaskTest {
     TaskManager manager = new InMemoryTaskManager();
@@ -118,5 +118,14 @@ public class HttpServerTaskTest {
         Response response1 = given().when().queryParam("id", "1").body(body).delete(url);
         response1.then().statusCode(SC_OK);
         given().when().get(url).then().statusCode(SC_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Создание таски 500")
+    public void createTask500Test() {
+        Task task = new Task("1", "2", Status.NEW);
+        String body = gson.toJson(task);
+        Response response = given().when().body(body + ",").post(url);
+        response.then().statusCode(SC_INTERNAL_SERVER_ERROR);
     }
 }
